@@ -31,7 +31,7 @@
 				<!-- Main -->
 					<div id="main">
 						<article class="thumb">
-							<a href="{{ url_for('video_feed') }}" class="image"><img src="images/thumbs/01.jpg" alt="" /></a>
+							<a href="{{ url_for('video_feed') }}" class="image"><img src="{{ url_for('video_feed') }}" alt="" /></a>
 							<h2>Magna feugiat lorem</h2>
 							<p>Nunc blandit nisi ligula magna sodales lectus elementum non. Integer id venenatis velit.</p>
 						</article>
@@ -41,7 +41,7 @@
 							<p>Nunc blandit nisi ligula magna sodales lectus elementum non. Integer id venenatis velit.</p>
 						</article>
 						<article class="thumb">
-							<a href="{{url_for('static',filename='images/fulls/03.jpg')}}" class="image"><img src="{{url_for('static',filename='images/thumbs/03.jpg')}}" alt="" /></a>
+							<a href="{{url_for('static',filename='images/fulls/03.jpg')}}" class="image"><img src="{{ url_for('video_feed') }}" alt="" /></a>
 							<h2>Tempus aliquam veroeros</h2>
 							<p>Nunc blandit nisi ligula magna sodales lectus elementum non. Integer id venenatis velit.</p>
 						</article>
