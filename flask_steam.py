@@ -11,7 +11,8 @@ class VideoCamera(object):
         dispW=680
         dispH=480
         flip=2
-        camSet2=' tcpclientsrc host=192.168.43.201 port=8554 ! gdpdepay ! rtph264depay ! h264parse ! nvv4l2decoder  ! nvvidconv flip-method='+str(flip)+' ! video/x-raw,format=BGRx ! videoconvert ! video/x-raw, width='+str(dispW)+', height='+str(dispH)+',format=BGR ! appsink  drop=true sync=false '
+#         camSet2=' tcpclientsrc host=192.168.43.201 port=8554 ! gdpdepay ! rtph264depay ! h264parse ! nvv4l2decoder  ! nvvidconv flip-method='+str(flip)+' ! video/x-raw,format=BGRx ! videoconvert ! video/x-raw, width='+str(dispW)+', height='+str(dispH)+',format=BGR ! appsink  drop=true sync=false '
+        camSet2='rtsp://admin:950793@192.168.43.21:554/live/profile.0'
         self.video = cv2.VideoCapture(camSet2)
 
     def __del__(self):
@@ -19,7 +20,7 @@ class VideoCamera(object):
 
     def get_frame(self):
         success, image = self.video.read()
-        
+        image = cv2.resize(image, (680, 480), interpolation=cv2.INTER_AREA)
         # 因为opencv读取的图片并非jpeg格式，因此要用motion JPEG模式需要先将图片转码成jpg格式图片
         ret, jpeg = cv2.imencode('.jpg', image)
         return jpeg.tobytes()
