@@ -3,7 +3,9 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask, render_template, Response
+from PIL import Image
 import cv2
+import numpy as np
 
 class VideoCamera1(object):
     def __init__(self):
@@ -11,7 +13,8 @@ class VideoCamera1(object):
         dispW=680
         dispH=480
         flip=2
-        camSet2=' tcpclientsrc host=192.168.43.201 port=8554 ! gdpdepay ! rtph264depay ! h264parse ! nvv4l2decoder  ! nvvidconv flip-method='+str(flip)+' ! video/x-raw,format=BGRx ! videoconvert ! video/x-raw, width='+str(dispW)+', height='+str(dispH)+',format=BGR ! appsink  drop=true sync=false '
+        #camSet2=' tcpclientsrc host=192.168.43.201 port=8554 ! gdpdepay ! rtph264depay ! h264parse ! nvv4l2decoder  ! nvvidconv flip-method='+str(flip)+' ! video/x-raw,format=BGRx ! videoconvert ! video/x-raw, width='+str(dispW)+', height='+str(dispH)+',format=BGR ! appsink  drop=true sync=false '
+        camSet2 = 'rtsp://admin:254249@192.168.43.17:5555/live/profile.0'
         self.video = cv2.VideoCapture(camSet2)
 
     def __del__(self):
@@ -19,10 +22,11 @@ class VideoCamera1(object):
 
     def get_frame(self):
         success, image = self.video.read()
-        
-        # 因为opencv读取的图片并非jpeg格式，因此要用motion JPEG模式需要先将图片转码成jpg格式图片
-        ret, jpeg = cv2.imencode('.jpg', image)
-        return jpeg.tobytes()
+        signal = Image.open('no-signal.jpeg')
+        while success:        
+            # 因为opencv读取的图片并非jpeg格式，因此要用motion JPEG模式需要先将图片转码成jpg格式图片
+            ret, jpeg = cv2.imencode('.jpg', image)
+            return jpeg.tobytes()
     
 class VideoCamera2(object):
     def __init__(self):
@@ -30,7 +34,8 @@ class VideoCamera2(object):
         dispW=680
         dispH=480
         flip=2
-        camSet2=' tcpclientsrc host=192.168.43.213 port=8554 ! gdpdepay ! rtph264depay ! h264parse ! nvv4l2decoder  ! nvvidconv flip-method='+str(flip)+' ! video/x-raw,format=BGRx ! videoconvert ! video/x-raw, width='+str(dispW)+', height='+str(dispH)+',format=BGR ! appsink  drop=true sync=false '
+        #camSet2=' tcpclientsrc host=192.168.43.213 port=8554 ! gdpdepay ! rtph264depay ! h264parse ! nvv4l2decoder  ! nvvidconv flip-method='+str(flip)+' ! video/x-raw,format=BGRx ! videoconvert ! video/x-raw, width='+str(dispW)+', height='+str(dispH)+',format=BGR ! appsink  drop=true sync=false '
+        camSet2 = 'rtsp://admin:950793@192.168.43.17:5554/live/profile.0'
         self.video = cv2.VideoCapture(camSet2)
 
     def __del__(self):
@@ -38,11 +43,11 @@ class VideoCamera2(object):
 
     def get_frame(self):
         success, image = self.video.read()
-        
-        # 因为opencv读取的图片并非jpeg格式，因此要用motion JPEG模式需要先将图片转码成jpg格式图片
-        ret, jpeg = cv2.imencode('.jpg', image)
-        return jpeg.tobytes()
-
+        signal = Image.open('no-signal.jpeg')
+        while success:        
+            # 因为opencv读取的图片并非jpeg格式，因此要用motion JPEG模式需要先将图片转码成jpg格式图片
+            ret, jpeg = cv2.imencode('.jpg', image)
+            return jpeg.tobytes()
 app = Flask(__name__)
 
 @app.route('/')  # 主页
@@ -60,7 +65,8 @@ def gen(camera):
 @app.route('/video_feed')  # 这个地址返回视频流响应
 def video_feed():
     return Response(gen(VideoCamera1()),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')   
+                    mimetype='multipart/x-mixed-replace; boundary=frame') 
+
 
 @app.route('/video_feed2')  # 这个地址返回视频流响应
 def video_feed2():

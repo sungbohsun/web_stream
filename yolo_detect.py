@@ -37,8 +37,9 @@ def plot_box(img,pred_xywhn):
 dispW=680
 dispH=480
 flip=2
-camSet2=' tcpclientsrc host=192.168.43.201 port=8554 ! gdpdepay ! rtph264depay ! h264parse ! nvv4l2decoder  ! nvvidconv flip-method='+str(flip)+' ! video/x-raw,format=BGRx ! videoconvert ! video/x-raw, width='+str(dispW)+', height='+str(dispH)+',format=BGR ! appsink  drop=true sync=false '
+camSet2='rtsp://10.96.212.247:5555/unicast'
 cap = cv2.VideoCapture(camSet2)
+cap.set(cv2.CAP_PROP_FPS, 1)
 
 ret, frame = cap.read()
 avg = cv2.blur(frame, (4, 4))
@@ -50,7 +51,8 @@ while(cap.isOpened()):
     while ret == False:
         print("Can't receive frame. Retrying ...")
         cap.release()
-        cap = cv2.VideoCapture(camSet2)                                                               
+        cap = cv2.VideoCapture(camSet2)     
+        cap.set(cv2.CAP_PROP_FPS, 1)
     else:
         img = letterbox(frame, 640, 64)[0]
         pred = model(img)
